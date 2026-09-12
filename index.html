@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- بيانات تحسين محركات البحث (SEO) -->
+  <title>Caffinity | كافينتي - معدات الإسبريسو والقهوة المختصة والتركي</title>
+  <meta name="description" content="تسوق أفضل ماكينات الإسبريسو المحمولة والمنزلية، ماكينات القهوة التركي، مطاحن البن، وفوامات اللبن في مصر من كافينتي. دفع عند الاستلام وطلب مباشر بالواتساب.">
+  <meta name="keywords" content="ماكينة اسبريسو محمولة, ماكينات تركي, فوامة حليب, مطحنة بن, كافينتي, Caffinity">
+  <meta name="robots" content="index, follow">
+
+  <!-- وسوم Open Graph للمشاركة عبر فيسبوك وواتساب -->
+  <meta property="og:title" content="كافينتي | معدات القهوة المختصة والإسبريسو والتركي">
+  <meta property="og:description" content="قهوتك المظبوطة في أي مكان - اطلب معداتك الآن عبر واتساب بكل سهولة.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80">
+
+  <!-- Tailwind CSS & الخط العربي -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Tajawal', sans-serif; }
+    .glass-card {
+      background: rgba(24, 24, 27, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#0f0f10] text-[#e8e6e3] min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
+
+  <!-- Header: اللوجو أقصى الشمال والسلة أقصى اليمين -->
+  <header class="sticky top-0 z-30 bg-[#161618]/90 backdrop-blur-md border-b border-white/10">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-row-reverse items-center justify-between">
+      
+      <!-- اللوجو أقصى الشمال -->
+      <a href="/" class="flex items-center gap-2">
+        <span class="text-xl font-extrabold tracking-wider text-amber-500 uppercase">Caffinity</span>
+        <span class="text-xl">☕</span>
+      </a>
+
+      <!-- زر السلة أقصى اليمين -->
+      <button onclick="toggleCart()" class="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg shadow-amber-900/20 transition">
+        <span>السلة</span>
+        <span id="cart-badge" class="bg-black/50 text-amber-300 text-[11px] px-2 py-0.5 rounded-full font-bold">0</span>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-6 px-4 text-center border-b border-white/5 bg-gradient-to-b from-amber-950/20 to-transparent">
+    <div class="max-w-xl mx-auto space-y-1.5">
+      <span class="text-[10px] uppercase tracking-widest text-amber-500 font-bold bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">Specialty Coffee & Espresso</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white">قهوتك المظبوطة في أي مكان</h1>
+      <p class="text-xs text-stone-400">معدات إسبريسو، تركي، ومستلزمات تحضير احترافية.</p>
+    </div>
+  </section>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="max-w-5xl mx-auto px-3.5 py-6 flex-grow w-full space-y-6">
+    
+    <!-- شريط دوائر الأقسام (Story Highlights) متمركز في منتصف الصفحة -->
+    <div class="flex items-center justify-center gap-4 overflow-x-auto pb-2 pt-1 no-scrollbar w-full" id="categories-container"></div>
+    
+    <!-- شبكة المنتجات -->
+    <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"></div>
+  </main>
+
+  <!-- نافذة تفاصيل المنتج والفيديو (Modal) -->
+  <div id="product-modal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-3 sm:p-4 backdrop-blur-md">
+    <div class="glass-card bg-[#18181b] w-full max-w-lg rounded-2xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl border border-white/10">
+      
+      <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+        <h3 id="modal-product-title" class="font-bold text-base text-amber-400">اسم المنتج</h3>
+        <button onclick="closeProductModal()" class="text-stone-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-5">
+        <div class="rounded-xl overflow-hidden bg-black aspect-video w-full border border-white/10 shadow-lg">
+          <iframe id="modal-product-video" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+          <span id="modal-product-price" class="text-xl font-black text-amber-400"></span>
+          <button id="modal-add-btn" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg font-bold text-xs transition shadow-md shadow-amber-900/30">
+            + أضف للسلة
+          </button>
+        </div>
+
+        <p id="modal-product-desc" class="text-stone-300 text-xs leading-relaxed"></p>
+
+        <div>
+          <h4 class="font-bold text-white text-xs mb-2.5 text-stone-200">المواصفات الفنية:</h4>
+          <div id="modal-product-specs" class="bg-black/30 rounded-xl border border-white/5 divide-y divide-white/5 text-xs"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- نافذة السلة والطلب (Cart Modal) -->
+  <div id="cart-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-[#18181b] w-full max-w-md rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <div class="bg-white/5 p-4 border-b border-white/10 flex justify-between items-center">
+        <h4 class="font-bold text-amber-400 text-sm">سلة المشتريات 🛒</h4>
+        <button onclick="toggleCart()" class="text-stone-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      
+      <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        <div id="cart-items" class="divide-y divide-white/10"></div>
+        
+        <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center font-bold text-sm">
+          <span>الإجمالي:</span>
+          <span id="cart-total" class="text-amber-400">0 ج.م</span>
+        </div>
+        
+        <div class="space-y-2 pt-2">
+          <input type="text" id="cust-name" placeholder="الاسم ثلاثي" class="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500">
+          <input type="tel" id="cust-phone" placeholder="رقم الهاتف (واتساب)" class="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500">
+          <input type="text" id="cust-address" placeholder="المحافظة والعنوان بالتفصيل" class="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500">
+        </div>
+      </div>
+      
+      <div class="p-4 bg-white/5 border-t border-white/10">
+        <button onclick="sendOrderToWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs flex items-center justify-center gap-2">
+          <span>إرسال الطلب عبر واتساب</span>
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.102-.115.434-.506.549-.68.116-.173.232-.144.39-.086.158.058 1.011.477 1.184.564.173.086.289.13.332.202.043.072.043.419-.101.824z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-[#121214] text-stone-500 py-4 text-center text-[11px] border-t border-white/5">
+    © 2026 كافينتي (Caffinity) - جميع الحقوق محفوظة
+  </footer>
+
+  <script>
+    // 1. رقم الهاتف المخصص لتلقي رسائل الأوردرات (بالصيغة الدولية بدون +)
+    const WHATSAPP_NUMBER = "201000000000";
+
+    // 2. قائمة التصنيفات مع الصور المصغرة
+    const categories = [
+      { id: "all", name: "الكل", img: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=120&q=80" },
+      { id: "portable", name: "إسبريسو محمول", img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=120&q=80" },
+      { id: "home", name: "إسبريسو منزلي", img: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=120&q=80" },
+      { id: "turkish", name: "ماكينات تركي", img: "https://images.unsplash.com/photo-1578374173705-969cbe6f2d6b?w=120&q=80" },
+      { id: "grinders", name: "مطاحن", img: "https://images.unsplash.com/photo-1589396575653-c09c794ff6a6?w=120&q=80" },
+      { id: "frothers", name: "فوامات لبن", img: "https://images.unsplash.com/photo-1534778101976-62847782c213?w=120&q=80" },
+      { id: "accessories", name: "إكسسوارات", img: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=120&q=80" }
+    ];
+
+    let currentCategory = "all";
+
+    // 3. كتالوج المنتجات
+    const products = [
+      {
+        id: 1,
+        category: "portable",
+        name: "ماكينة إسبريسو محمولة (Portable)",
+        price: 1850,
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80",
+        videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        desc: "ضغط 18 بار، تدعم البن المطحون والكبسولات لتحضير الإسبريسو أينما كنت.",
+        specs: { "أقصى ضغط": "18 بار", "سعة الماء": "80 مل", "الوزن": "360 جم" }
+      },
+      {
+        id: 2,
+        category: "home",
+        name: "ماكينة إسبريسو منزلية بمبخر حليب",
+        price: 4600,
+        image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=600&q=80",
+        videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        desc: "مضخة 15 بار إيطالية لصنع الإسبريسو واللاتيه والكابتشينو برغوة كريمية غنية.",
+        specs: { "المضخة": "15 بار", "الخزان": "1.2 لتر", "القدرة": "1350 واط" }
+      },
+      {
+        id: 3,
+        category: "turkish",
+        name: "ماكينة قهوة تركي أوتوماتيك بحساس لمنع الفوران",
+        price: 1450,
+        image: "https://images.unsplash.com/photo-1578374173705-969cbe6f2d6b?w=600&q=80",
+        videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        desc: "تحضير فنجان قهوة تركي بوش متماسك وسرعة فائقة مع نظام ذكي لمنع انسكاب القهوة.",
+        specs: { "السعة": "حتى 4 فناجين", "القدرة": "400 واط", "نظام الأمان": "إيقاف تلقائي وحساس فيضان" }
+      },
+      {
+        id: 4,
+        category: "grinders",
+        name: "طاحونة بن يدوية من الفولاذ المقاوم للصدأ",
+        price: 750,
+        image: "https://images.unsplash.com/photo-1589396575653-c09c794ff6a6?w=600&q=80",
+        videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        desc: "تروس سيراميك مخروطية مقاومة للتآكل تضمن طحناً دقيقاً ومتناسقاً لمختلف درجات الطحن.",
+        specs: { "التروس": "سيراميك مخروطي", "سعة الوعاء": "30 جرام بن" }
+      },
+      {
+        id: 5,
+        category: "frothers",
+        name: "خفاقة وفوامة حليب كهربائية قابلة لإعادة الشحن",
+        price: 390,
+        image: "https://images.unsplash.com/photo-1534778101976-62847782c213?w=600&q=80",
+        videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        desc: "موتور قوي بـ 3 سرعات قابلة للتعديل لعمل فوم حليب حريري وسميك في ثوانٍ معدودة.",
+        specs: { "الشحن": "USB Type-C", "السرعات": "3 مستويات سرعة", "المادة": "ستانلس ستيل غذائي" }
+      },
+      {
+        id: 6,
+        category: "accessories",
+        name: "مكبس قهوة احترافي (Tamper) 51mm",
+        price: 350,
+        image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=600&q=80",
+        videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        desc: "قاعدة مسطحة من الإستانلس ستيل ومقبض خشبي فاخر لضغط متساوي ومتوازن لقرص القهوة.",
+        specs: { "المقاس": "51 ملم", "الخامة": "ستانلس ستيل 304 وخشب طبيعي" }
+      }
+    ];
+
+    let cart = [];
+
+    // بناء دوائر الأقسام في المنتصف
+    function renderCategories() {
+      const container = document.getElementById("categories-container");
+      container.innerHTML = categories.map(c => {
+        const isActive = currentCategory === c.id;
+        return `
+          <div onclick="setCategory('${c.id}')" class="flex flex-col items-center gap-1.5 cursor-pointer flex-shrink-0 group">
+            <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-full p-[2px] transition-all duration-300 ${
+              isActive 
+                ? 'bg-gradient-to-tr from-amber-600 via-amber-400 to-amber-500 ring-2 ring-amber-500/50 scale-105' 
+                : 'bg-white/10 hover:bg-white/20'
+            }">
+              <div class="w-full h-full rounded-full overflow-hidden bg-stone-900 border-2 border-[#0f0f10]">
+                <img src="${c.img}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+              </div>
+            </div>
+            <span class="text-[11px] font-medium transition-colors whitespace-nowrap ${
+              isActive ? 'text-amber-400 font-bold' : 'text-stone-400 group-hover:text-stone-200'
+            }">
+              ${c.name}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setCategory(catId) {
+      currentCategory = catId;
+      renderCategories();
+      renderProducts();
+    }
+
+    // عرض كروت المنتجات
+    function renderProducts() {
+      const container = document.getElementById("products-grid");
+      const filtered = currentCategory === "all" ? products : products.filter(p => p.category === currentCategory);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-stone-500 text-xs">لا توجد منتجات متاحة في هذا القسم حالياً.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(p => `
+        <div class="glass-card rounded-xl overflow-hidden flex flex-col justify-between hover:border-amber-500/40 transition duration-300">
+          <div onclick="openProductModal(${p.id})" class="cursor-pointer">
+            <div class="h-32 sm:h-40 w-full overflow-hidden bg-black/40">
+              <img src="${p.image}" alt="${p.name}" class="h-full w-full object-cover hover:scale-105 transition duration-300">
+            </div>
+            <div class="p-2.5 sm:p-3">
+              <h3 class="font-bold text-xs sm:text-sm text-stone-100 line-clamp-1 leading-snug">${p.name}</h3>
+              <p class="text-[11px] text-stone-400 mt-1 line-clamp-1">${p.desc}</p>
+            </div>
+          </div>
+          <div class="p-2.5 sm:p-3 pt-0 flex items-center justify-between mt-1 border-t border-white/5">
+            <span class="font-black text-amber-400 text-xs sm:text-sm">${p.price} <span class="text-[10px] font-normal text-stone-400">ج.م</span></span>
+            <button onclick="addToCart(${p.id})" class="bg-amber-600/90 hover:bg-amber-500 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition">
+              + أضف
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // فتح تفاصيل المنتج وتحديث رابط الـ URL
+    function openProductModal(id, updateUrl = true) {
+      const prod = products.find(p => p.id === id);
+      if (!prod) return;
+
+      document.getElementById("modal-product-title").textContent = prod.name;
+      document.getElementById("modal-product-price").textContent = `${prod.price} ج.م`;
+      document.getElementById("modal-product-desc").textContent = prod.desc;
+      document.getElementById("modal-product-video").src = prod.videoEmbed;
+
+      const specsBox = document.getElementById("modal-product-specs");
+      specsBox.innerHTML = Object.entries(prod.specs).map(([key, value]) => `
+        <div class="flex justify-between px-3 py-2">
+          <span class="text-stone-400">${key}</span>
+          <span class="font-semibold text-stone-200">${value}</span>
+        </div>
+      `).join('');
+
+      const addBtn = document.getElementById("modal-add-btn");
+      addBtn.onclick = () => {
+        addToCart(prod.id);
+        closeProductModal();
+      };
+
+      document.getElementById("product-modal").classList.remove("hidden");
+
+      if (updateUrl) {
+        const newUrl = `${window.location.pathname}?product=${prod.id}`;
+        window.history.pushState({ productId: prod.id }, "", newUrl);
+      }
+    }
+
+    function closeProductModal() {
+      document.getElementById("product-modal").classList.add("hidden");
+      document.getElementById("modal-product-video").src = "";
+      window.history.pushState({}, "", window.location.pathname);
+    }
+
+    function checkUrlForProduct() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = parseInt(urlParams.get("product"));
+      if (productId) openProductModal(productId, false);
+    }
+
+    // إدارة السلة
+    function addToCart(id) {
+      const item = cart.find(i => i.id === id);
+      if (item) item.qty++;
+      else cart.push({ ...products.find(p => p.id === id), qty: 1 });
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById("cart-badge").textContent = cart.reduce((s, i) => s + i.qty, 0);
+      const itemsBox = document.getElementById("cart-items");
+      
+      if (!cart.length) {
+        itemsBox.innerHTML = '<p class="text-center text-stone-500 py-4 text-xs">السلة فارغة حالياً.</p>';
+        document.getElementById("cart-total").textContent = "0 ج.م";
+        return;
+      }
+
+      let total = 0;
+      itemsBox.innerHTML = cart.map(i => {
+        total += i.price * i.qty;
+        return `
+          <div class="flex justify-between py-2 text-xs">
+            <div>
+              <p class="font-semibold text-stone-200">${i.name}</p>
+              <p class="text-stone-500 text-[10px]">${i.price} ج.م × ${i.qty}</p>
+            </div>
+            <span class="font-bold text-amber-400">${i.price * i.qty} ج.م</span>
+          </div>`;
+      }).join('');
+      document.getElementById("cart-total").textContent = `${total} ج.م`;
+    }
+
+    function toggleCart() {
+      document.getElementById("cart-modal").classList.toggle("hidden");
+    }
+
+    // إرسال الطلب للواتساب
+    function sendOrderToWhatsApp() {
+      if (!cart.length) return alert("السلة فارغة، من فضلك أضف منتجات أولاً!");
+      
+      const name = document.getElementById("cust-name").value.trim();
+      const phone = document.getElementById("cust-phone").value.trim();
+      const address = document.getElementById("cust-address").value.trim();
+
+      if (!name || !phone || !address) return alert("يرجى كتابة الاسم ورقم الهاتف والعنوان بالتفصيل.");
+
+      let total = 0;
+      let list = "";
+      cart.forEach((i, idx) => {
+        total += i.price * i.qty;
+        list += `${idx + 1}. ${i.name} (${i.qty}×) = ${i.price * i.qty} ج.م\n`;
+      });
+
+      const msg = `طلب جديد من موقع كافينتي (Caffinity) ☕\n\nالاسم: ${name}\nالهاتف: ${phone}\nالعنوان: ${address}\n\nالطلبات:\n${list}\nالإجمالي: ${total} ج.م (+ مصاريف الشحن)`;
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    // التهيئة وتشغيل الصفحة
+    renderCategories();
+    renderProducts();
+    checkUrlForProduct();
+  </script>
+</body>
+</html>
