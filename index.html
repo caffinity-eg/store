@@ -4,18 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- بيانات تحسين محركات البحث (SEO) -->
   <title>Caffinity | كافينتي - معدات الإسبريسو والقهوة المختصة والتركي</title>
   <meta name="description" content="تسوق أفضل ماكينات الإسبريسو المحمولة والمنزلية، ماكينات القهوة التركي، مطاحن البن، وفوامات اللبن في مصر من كافينتي. دفع عند الاستلام وطلب مباشر بالواتساب.">
   <meta name="keywords" content="ماكينة اسبريسو محمولة, ماكينات تركي, فوامة حليب, مطحنة بن, كافينتي, Caffinity">
   <meta name="robots" content="index, follow">
 
-  <!-- وسوم Open Graph للمشاركة عبر فيسبوك وواتساب -->
   <meta property="og:title" content="كافينتي | معدات القهوة المختصة والإسبريسو والتركي">
   <meta property="og:description" content="قهوتك المظبوطة في أي مكان - اطلب معداتك الآن عبر واتساب بكل سهولة.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80">
 
-  <!-- Tailwind CSS & الخط العربي -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   
@@ -32,15 +29,15 @@
 </head>
 <body class="bg-[#0f0f10] text-[#e8e6e3] min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
 
-  <!-- Header: اللوجو أقصى الشمال والسلة أقصى اليمين -->
+  <!-- Header: الضغط على كافينتي والفنجان يعيد العميل للرئيسية ويعرض كل المنتجات -->
   <header class="sticky top-0 z-30 bg-[#161618]/90 backdrop-blur-md border-b border-white/10">
     <div class="max-w-5xl mx-auto px-4 py-3 flex flex-row-reverse items-center justify-between">
       
-      <!-- اللوجو أقصى الشمال -->
-      <a href="/" class="flex items-center gap-2">
-        <span class="text-xl font-extrabold tracking-wider text-amber-500 uppercase">Caffinity</span>
-        <span class="text-xl">☕</span>
-      </a>
+      <!-- اللوجو أقصى الشمال - يرجع للكل وللرئيسية عند الضغط -->
+      <button onclick="resetToHome()" class="flex items-center gap-2 focus:outline-none group">
+        <span class="text-xl font-extrabold tracking-wider text-amber-500 uppercase group-hover:text-amber-400 transition">Caffinity</span>
+        <span class="text-xl group-hover:scale-110 transition">☕</span>
+      </button>
 
       <!-- زر السلة أقصى اليمين -->
       <button onclick="toggleCart()" class="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg shadow-amber-900/20 transition">
@@ -63,8 +60,10 @@
   <!-- المحتوى الرئيسي -->
   <main class="max-w-5xl mx-auto px-3.5 py-6 flex-grow w-full space-y-6">
     
-    <!-- شريط دوائر الأقسام (Story Highlights) متمركز في منتصف الصفحة -->
-    <div class="flex items-center justify-center gap-4 overflow-x-auto pb-2 pt-1 no-scrollbar w-full" id="categories-container"></div>
+    <!-- شريط دوائر الأقسام: يبدأ من اليمين (الكل) على الموبايل ويتمركز على الشاشات الكبيرة مع حشو مريح -->
+    <div class="w-full overflow-x-auto no-scrollbar py-2">
+      <div class="flex items-center gap-4 w-max min-w-full px-2 justify-start sm:justify-center" id="categories-container"></div>
+    </div>
     
     <!-- شبكة المنتجات -->
     <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"></div>
@@ -140,10 +139,8 @@
   </footer>
 
   <script>
-    // 1. رقم الهاتف المخصص لتلقي رسائل الأوردرات (بالصيغة الدولية بدون +)
     const WHATSAPP_NUMBER = "201000000000";
 
-    // 2. قائمة التصنيفات مع الصور المصغرة
     const categories = [
       { id: "all", name: "الكل", img: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=120&q=80" },
       { id: "portable", name: "إسبريسو محمول", img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=120&q=80" },
@@ -156,7 +153,6 @@
 
     let currentCategory = "all";
 
-    // 3. كتالوج المنتجات
     const products = [
       {
         id: 1,
@@ -222,7 +218,14 @@
 
     let cart = [];
 
-    // بناء دوائر الأقسام في المنتصف
+    // دالة العودة للرئيسية وعرض الكل عند النقر على اللوجو
+    function resetToHome() {
+      setCategory("all");
+      window.history.pushState({}, "", window.location.pathname);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // بناء دوائر الأقسام
     function renderCategories() {
       const container = document.getElementById("categories-container");
       container.innerHTML = categories.map(c => {
