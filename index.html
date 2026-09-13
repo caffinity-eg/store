@@ -33,11 +33,11 @@
   <header class="sticky top-0 z-30 bg-[#161618]/90 backdrop-blur-md border-b border-white/10">
     <div class="max-w-5xl mx-auto px-4 py-3 flex flex-row-reverse items-center justify-between">
       
-      <!-- اللوجو والاسم والفنجان: الضغط عليهم يعيد العميل للصفحة الرئيسية بالكامل -->
-      <button onclick="resetToHome()" class="flex items-center gap-2 focus:outline-none group cursor-pointer">
+      <!-- اللوجو أقصى الشمال - رابط مباشر يعمل ريفرش نظيف للصفحة الرئيسية -->
+      <a href="./" class="flex items-center gap-2 focus:outline-none group cursor-pointer">
         <span class="text-xl font-extrabold tracking-wider text-amber-500 uppercase group-hover:text-amber-400 transition">Caffinity</span>
         <span class="text-xl group-hover:scale-110 transition">☕</span>
-      </button>
+      </a>
 
       <!-- زر السلة أقصى اليمين -->
       <button onclick="toggleCart()" class="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg shadow-amber-900/20 transition">
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <!-- نافذة السلة والطلب (Cart Modal) -->
+  <!-- نافذة السلة والطلب (Cart Modal مع التحكم بالكمية والحذف) -->
   <div id="cart-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
     <div class="bg-[#18181b] w-full max-w-md rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
       
@@ -179,7 +179,7 @@
         category: "turkish",
         name: "ماكينة قهوة تركي أوتوماتيك بحساس لمنع الفوران",
         price: 1450,
-        image: "https://images.unsplash.com/photo-1578374173705-969cbe6f2d6b?w=120&q=80",
+        image: "https://images.unsplash.com/photo-1578374173705-969cbe6f2d6b?w=600&q=80",
         videoEmbed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
         desc: "تحضير فنجان قهوة تركي بوش متماسك وسرعة فائقة مع نظام ذكي لمنع انسكاب القهوة.",
         specs: { "السعة": "حتى 4 فناجين", "القدرة": "400 واط", "نظام الأمان": "إيقاف تلقائي وحساس فيضان" }
@@ -217,22 +217,6 @@
     ];
 
     let cart = [];
-
-    // دالة العودة للرئيسية وإعادة ضبط كل شيء
-    function resetToHome() {
-      // 1. إغلاق النوافذ المنبثقة إذا كانت مفتوحة
-      closeProductModal();
-      document.getElementById("cart-modal").classList.add("hidden");
-
-      // 2. إعادة تصفية المنتجات على "الكل"
-      setCategory("all");
-
-      // 3. إعادة رابط المتصفح للوضع النظيف
-      window.history.pushState({}, "", window.location.pathname);
-
-      // 4. الصعود لأعلى الصفحة بسلاسة
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
 
     function renderCategories() {
       const container = document.getElementById("categories-container");
@@ -338,7 +322,7 @@
       if (productId) openProductModal(productId, false);
     }
 
-    // إدارة السلة والكميات
+    // إدارة السلة
     function addToCart(id) {
       const item = cart.find(i => i.id === id);
       if (item) {
@@ -444,7 +428,6 @@
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     }
 
-    // التهيئة المبدئية
     renderCategories();
     renderProducts();
     checkUrlForProduct();
