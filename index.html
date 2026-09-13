@@ -29,11 +29,11 @@
 </head>
 <body class="bg-[#0f0f10] text-[#e8e6e3] min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
 
-  <!-- Header: الضغط على كافينتي والفنجان يعيد العميل للرئيسية ويعرض كل المنتجات -->
+  <!-- Header -->
   <header class="sticky top-0 z-30 bg-[#161618]/90 backdrop-blur-md border-b border-white/10">
     <div class="max-w-5xl mx-auto px-4 py-3 flex flex-row-reverse items-center justify-between">
       
-      <!-- اللوجو أقصى الشمال - يرجع للكل وللرئيسية عند الضغط -->
+      <!-- اللوجو أقصى الشمال - يعيد للرئيسية والكل -->
       <button onclick="resetToHome()" class="flex items-center gap-2 focus:outline-none group">
         <span class="text-xl font-extrabold tracking-wider text-amber-500 uppercase group-hover:text-amber-400 transition">Caffinity</span>
         <span class="text-xl group-hover:scale-110 transition">☕</span>
@@ -60,7 +60,7 @@
   <!-- المحتوى الرئيسي -->
   <main class="max-w-5xl mx-auto px-3.5 py-6 flex-grow w-full space-y-6">
     
-    <!-- شريط دوائر الأقسام: يبدأ من اليمين (الكل) على الموبايل ويتمركز على الشاشات الكبيرة مع حشو مريح -->
+    <!-- شريط دوائر الأقسام -->
     <div class="w-full overflow-x-auto no-scrollbar py-2">
       <div class="flex items-center gap-4 w-max min-w-full px-2 justify-start sm:justify-center" id="categories-container"></div>
     </div>
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <!-- نافذة السلة والطلب (Cart Modal) -->
+  <!-- نافذة السلة والطلب (Cart Modal مع التحكم الكامل في الكمية والحذف) -->
   <div id="cart-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
     <div class="bg-[#18181b] w-full max-w-md rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
       
@@ -111,13 +111,16 @@
       </div>
       
       <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        <!-- المنتجات داخل السلة -->
         <div id="cart-items" class="divide-y divide-white/10"></div>
         
+        <!-- ملخص السعر الإجمالي -->
         <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center font-bold text-sm">
           <span>الإجمالي:</span>
           <span id="cart-total" class="text-amber-400">0 ج.م</span>
         </div>
         
+        <!-- حقول بيانات التوصيل -->
         <div class="space-y-2 pt-2">
           <input type="text" id="cust-name" placeholder="الاسم ثلاثي" class="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500">
           <input type="tel" id="cust-phone" placeholder="رقم الهاتف (واتساب)" class="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500">
@@ -125,6 +128,7 @@
         </div>
       </div>
       
+      <!-- زر الطلب على واتساب -->
       <div class="p-4 bg-white/5 border-t border-white/10">
         <button onclick="sendOrderToWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs flex items-center justify-center gap-2">
           <span>إرسال الطلب عبر واتساب</span>
@@ -218,14 +222,12 @@
 
     let cart = [];
 
-    // دالة العودة للرئيسية وعرض الكل عند النقر على اللوجو
     function resetToHome() {
       setCategory("all");
       window.history.pushState({}, "", window.location.pathname);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // بناء دوائر الأقسام
     function renderCategories() {
       const container = document.getElementById("categories-container");
       container.innerHTML = categories.map(c => {
@@ -257,7 +259,6 @@
       renderProducts();
     }
 
-    // عرض كروت المنتجات
     function renderProducts() {
       const container = document.getElementById("products-grid");
       const filtered = currentCategory === "all" ? products : products.filter(p => p.category === currentCategory);
@@ -288,7 +289,6 @@
       `).join('');
     }
 
-    // فتح تفاصيل المنتج وتحديث رابط الـ URL
     function openProductModal(id, updateUrl = true) {
       const prod = products.find(p => p.id === id);
       if (!prod) return;
@@ -332,36 +332,93 @@
       if (productId) openProductModal(productId, false);
     }
 
-    // إدارة السلة
+    // ==================== دوال إدارة السلة والتعديل والحذف ====================
+
+    // إضافة منتج للسلة
     function addToCart(id) {
       const item = cart.find(i => i.id === id);
-      if (item) item.qty++;
-      else cart.push({ ...products.find(p => p.id === id), qty: 1 });
+      if (item) {
+        item.qty++;
+      } else {
+        const prod = products.find(p => p.id === id);
+        if (prod) cart.push({ ...prod, qty: 1 });
+      }
       updateCartUI();
     }
 
+    // زيادة كمية منتج داخل السلة
+    function increaseQty(id) {
+      const item = cart.find(i => i.id === id);
+      if (item) {
+        item.qty++;
+        updateCartUI();
+      }
+    }
+
+    // تقليل كمية منتج أو حذفه إذا أصبحت الكمية صفر
+    function decreaseQty(id) {
+      const item = cart.find(i => i.id === id);
+      if (item) {
+        item.qty--;
+        if (item.qty <= 0) {
+          removeFromCart(id);
+        } else {
+          updateCartUI();
+        }
+      }
+    }
+
+    // حذف المنتج نهائياً من السلة
+    function removeFromCart(id) {
+      cart = cart.filter(i => i.id !== id);
+      updateCartUI();
+    }
+
+    // تحديث واجهة السلة وتوليد أزرار التحكم
     function updateCartUI() {
       document.getElementById("cart-badge").textContent = cart.reduce((s, i) => s + i.qty, 0);
       const itemsBox = document.getElementById("cart-items");
       
       if (!cart.length) {
-        itemsBox.innerHTML = '<p class="text-center text-stone-500 py-4 text-xs">السلة فارغة حالياً.</p>';
+        itemsBox.innerHTML = '<p class="text-center text-stone-500 py-6 text-xs">السلة فارغة حالياً.</p>';
         document.getElementById("cart-total").textContent = "0 ج.م";
         return;
       }
 
       let total = 0;
       itemsBox.innerHTML = cart.map(i => {
-        total += i.price * i.qty;
+        const subtotal = i.price * i.qty;
+        total += subtotal;
         return `
-          <div class="flex justify-between py-2 text-xs">
-            <div>
-              <p class="font-semibold text-stone-200">${i.name}</p>
-              <p class="text-stone-500 text-[10px]">${i.price} ج.م × ${i.qty}</p>
+          <div class="flex items-center justify-between py-3 gap-2">
+            <!-- تفاصيل المنتج والاسم -->
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-stone-200 text-xs truncate">${i.name}</p>
+              <p class="text-stone-500 text-[10px] mt-0.5">${i.price} ج.م للقطعة</p>
             </div>
-            <span class="font-bold text-amber-400">${i.price * i.qty} ج.م</span>
-          </div>`;
+
+            <!-- أزرار التحكم في الكمية (+ و -) وحذف -->
+            <div class="flex items-center gap-1.5 bg-black/50 px-2 py-1 rounded-lg border border-white/5">
+              <button onclick="decreaseQty(${i.id})" class="w-5 h-5 flex items-center justify-center rounded bg-white/10 hover:bg-amber-600 text-white font-bold text-xs transition">
+                -
+              </button>
+              <span class="text-xs font-bold text-stone-200 px-1.5">${i.qty}</span>
+              <button onclick="increaseQty(${i.id})" class="w-5 h-5 flex items-center justify-center rounded bg-white/10 hover:bg-amber-600 text-white font-bold text-xs transition">
+                +
+              </button>
+            </div>
+
+            <!-- السعر الإجمالي للبند وزر الحذف -->
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-amber-400 text-xs whitespace-nowrap">${subtotal} ج.م</span>
+              <button onclick="removeFromCart(${i.id})" title="حذف" class="text-stone-500 hover:text-red-400 p-1 transition">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
       }).join('');
+
       document.getElementById("cart-total").textContent = `${total} ج.م`;
     }
 
@@ -382,15 +439,16 @@
       let total = 0;
       let list = "";
       cart.forEach((i, idx) => {
-        total += i.price * i.qty;
-        list += `${idx + 1}. ${i.name} (${i.qty}×) = ${i.price * i.qty} ج.م\n`;
+        const subtotal = i.price * i.qty;
+        total += subtotal;
+        list += `${idx + 1}. ${i.name} (عدد: ${i.qty}) = ${subtotal} ج.م\n`;
       });
 
       const msg = `طلب جديد من موقع كافينتي (Caffinity) ☕\n\nالاسم: ${name}\nالهاتف: ${phone}\nالعنوان: ${address}\n\nالطلبات:\n${list}\nالإجمالي: ${total} ج.م (+ مصاريف الشحن)`;
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     }
 
-    // التهيئة وتشغيل الصفحة
+    // التهيئة المبدئية
     renderCategories();
     renderProducts();
     checkUrlForProduct();
